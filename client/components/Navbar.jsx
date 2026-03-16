@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { Search, User, Heart, ChevronDown, ShoppingBag } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import CartDrawer from "./CartDrawer";
@@ -9,6 +10,8 @@ import CartDrawer from "./CartDrawer";
 export default function Navbar() {
   const { totalItems } = useCart();
   const [cartOpen, setCartOpen] = useState(false);
+
+  const pathname = usePathname();
 
   return (
     <>
@@ -28,17 +31,22 @@ export default function Navbar() {
 
           {/* Nav Links */}
           <nav style={{ display: "flex", flex: 1, alignItems: "center", gap: "32px" }}>
-            <Link href="/" style={{ display: "flex", alignItems: "center", gap: "2px", fontSize: "13px", fontWeight: 700, color: "#1f2937", textDecoration: "none" }}>
+            <Link href="/" style={{ display: "flex", alignItems: "center", gap: "2px", fontSize: "13px", fontWeight: 700, color: pathname === "/" ? "#c31f6d" : "#1f2937", textDecoration: "none" }}>
               HOME <ChevronDown size={12} color="#9ca3af" />
             </Link>
-            <Link href="/kitchen" style={{ display: "flex", alignItems: "center", gap: "2px", fontSize: "13px", fontWeight: 700, color: "#1f2937", textDecoration: "none" }}>
+            <Link href="/kitchen" style={{ display: "flex", alignItems: "center", gap: "2px", fontSize: "13px", fontWeight: 700, color: pathname === "/kitchen" ? "#c31f6d" : "#1f2937", textDecoration: "none" }}>
               KITCHEN <ChevronDown size={12} color="#9ca3af" />
             </Link>
-            <Link href="/garden" style={{ fontSize: "13px", fontWeight: 700, color: "#1f2937", textDecoration: "none" }}>GARDEN</Link>
-            <Link href="/gifting" style={{ fontSize: "13px", fontWeight: 700, color: "#1f2937", textDecoration: "none" }}>GIFTING</Link>
-            <Link href="/wholesale" style={{ fontSize: "13px", fontWeight: 700, color: "#c31f6d", textDecoration: "none" }}>WHOLESALE</Link>
-            <Link href="/about" style={{ fontSize: "13px", fontWeight: 700, color: "#1f2937", textDecoration: "none" }}>ABOUT US</Link>
-            <Link href="/contact" style={{ fontSize: "13px", fontWeight: 700, color: "#1f2937", textDecoration: "none" }}>CONTACT US</Link>
+            <Link href="/garden" style={{ fontSize: "13px", fontWeight: 700, color: pathname === "/garden" ? "#c31f6d" : "#1f2937", textDecoration: "none" }}>GARDEN</Link>
+            <Link href="/gifting" style={{ fontSize: "13px", fontWeight: 700, color: pathname === "/gifting" ? "#c31f6d" : "#1f2937", textDecoration: "none" }}>GIFTING</Link>
+            <Link
+              href={pathname === "/wholesale" ? "/" : "/wholesale"}
+              style={{ fontSize: "13px", fontWeight: 700, color: "#9ca3af", textDecoration: "none" }}
+            >
+              {pathname === "/wholesale" ? "RETAIL" : "WHOLESALE"}
+            </Link>
+            <Link href="/about" style={{ fontSize: "13px", fontWeight: 700, color: pathname === "/about" ? "#c31f6d" : "#1f2937", textDecoration: "none" }}>ABOUT US</Link>
+            <Link href="/contact" style={{ fontSize: "13px", fontWeight: 700, color: pathname === "/contact" ? "#c31f6d" : "#1f2937", textDecoration: "none" }}>CONTACT US</Link>
           </nav>
 
           {/* Icons */}
