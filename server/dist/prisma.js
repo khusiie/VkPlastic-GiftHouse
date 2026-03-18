@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.prismaClient = void 0;
+const client_1 = require("@prisma/client");
+const prismaClientSingleton = () => {
+    return new client_1.PrismaClient({
+        log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+    });
+};
+const globalForPrisma = globalThis;
+exports.prismaClient = globalForPrisma.prisma ?? prismaClientSingleton();
+if (process.env.NODE_ENV !== "production")
+    globalForPrisma.prisma = exports.prismaClient;
