@@ -7,7 +7,12 @@ import { prismaClient } from "../prisma";
 
 const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     // 1 extract the token from header;
-    const token = req.headers.authorization;
+    let token = req.headers.authorization;
+
+    // if token is present, strip out the Bearer prefix
+    if (token && token.startsWith('Bearer ')) {
+        token = token.slice(7);
+    }
 
     // 2 if token is not present, throw an error of unauthorized 
     if (!token) {

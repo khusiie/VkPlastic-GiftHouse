@@ -10,6 +10,6 @@ productRoutes.post('/', [authMiddleware, adminMiddleware], errorHandler(createPr
 productRoutes.put('/:id', [authMiddleware, adminMiddleware], errorHandler(updateProduct));
 productRoutes.delete('/:id', [authMiddleware, adminMiddleware], errorHandler(deleteProduct));
 productRoutes.get('/', [authMiddleware], errorHandler(listProducts));
-productRoutes.get('/:id', [authMiddleware], errorHandler(getProductById));
 productRoutes.get('/search', [authMiddleware], errorHandler(searchProducts));
+productRoutes.get('/:id', [authMiddleware], errorHandler(getProductById));
 export default productRoutes;

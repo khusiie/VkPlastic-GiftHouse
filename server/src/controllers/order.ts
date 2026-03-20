@@ -150,7 +150,7 @@ export const cancelOrder = async (req: Request, res: Response) => {
     }
 
     if (order.status === 'CANCELLED' || order.status === 'DELIVERED') {
-        throw new BadRequestsException('Cannot cancel this order!', ErrorCode.INCORRECT_PASSWORD); // Reusing a proxy for "not allowed" 
+        throw new BadRequestsException('Cannot cancel this order!', ErrorCode.ORDER_UNPROCESSABLE);
     }
 
     const updatedOrder = await prismaClient.$transaction(async (tx) => {

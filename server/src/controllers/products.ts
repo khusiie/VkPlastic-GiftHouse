@@ -6,11 +6,12 @@ import { ErrorCode } from '../exceptions/root';
 
 export const createProduct = async (req: Request, res: Response) => {
     // Validation
-    ProductSchema.parse(req.body);
+
+    const validatedData = ProductSchema.parse(req.body);
 
     const product = await prismaClient.product.create({
         data: {
-            ...req.body,
+            ...validatedData,
         }
     });
     res.json(product);

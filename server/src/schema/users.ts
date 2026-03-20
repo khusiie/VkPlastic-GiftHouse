@@ -23,3 +23,8 @@ export const UpdateUserSchema = z.object({
 export const ChangeUserRoleSchema = z.object({
     role: z.enum(['ADMIN', 'USER']),
 });
+
+export const LoginSchema = z.object({
+    email: z.string().email(),
+    password: z.string(),
+});

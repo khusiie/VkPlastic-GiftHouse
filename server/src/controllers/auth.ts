@@ -6,7 +6,7 @@ import { JWT_SECRET } from '../secrets';
 import { ErrorCode } from '../exceptions/root';
 import { BadRequestsException } from '../exceptions/bad_requests';
 import { UnprocessableEntity } from '../exceptions/validation';
-import { SignUpSchema } from "../schema/users";
+import { SignUpSchema, LoginSchema } from "../schema/users";
 
 
 export const signup = async (req: Request, res: Response) => {
@@ -32,10 +32,11 @@ export const signup = async (req: Request, res: Response) => {
 }
 
 export const login = async (req: Request, res: Response) => {
+    LoginSchema.parse(req.body);
     const { email, password } = req.body;
     let user = await prismaClient.user.findUnique({ where: { email } })
     if (!user) {
-        throw new BadRequestsException('User does  not exist!', ErrorCode.USER_NOT_FOUND);
+        throw new BadRequestsException('User does not exist!', ErrorCode.USER_NOT_FOUND);
 
     }
 
@@ -54,7 +55,6 @@ export const login = async (req: Request, res: Response) => {
 
 
 export const me = async (req: Request, res: Response) => {
-
-    res.json(req.user)
-
+    const { password, ...user } = req.user as any;
+    res.json(user);
 }

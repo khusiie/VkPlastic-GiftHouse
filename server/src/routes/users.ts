@@ -9,8 +9,8 @@ const addressRoutes: Router = Router();
 addressRoutes.post('/', [authMiddleware], errorHandler(addAddress));
 addressRoutes.delete('/:id', [authMiddleware], errorHandler(deleteAddress));
 addressRoutes.get('/', [authMiddleware], errorHandler(listAddresses));
-addressRoutes.put('/:id', [authMiddleware], errorHandler(updateAddress));
 addressRoutes.put('/update', [authMiddleware], errorHandler(updateUser));
+addressRoutes.put('/:id', [authMiddleware], errorHandler(updateAddress));
 
 // Admin routes
 addressRoutes.get('/all', [authMiddleware, adminMiddleware], errorHandler(listUsers));

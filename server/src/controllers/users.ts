@@ -102,16 +102,17 @@ export const updateUser = async (req: Request, res: Response) => {
 };
 
 export const listUsers = async (req: Request, res: Response) => {
-    const users = await prismaClient.user.findMany({
+    const usersRaw = await prismaClient.user.findMany({
         skip: req.query.skip ? +req.query.skip : 0,
         take: 5
     });
+    const users = usersRaw.map(({ password, ...user }) => user);
     res.json(users);
 };
 
 export const getUserById = async (req: Request, res: Response) => {
     try {
-        const user = await prismaClient.user.findFirstOrThrow({
+        const userRaw = await prismaClient.user.findFirstOrThrow({
             where: {
                 id: +req.params.id
             },
@@ -119,6 +120,7 @@ export const getUserById = async (req: Request, res: Response) => {
                 addresses: true
             }
         });
+        const { password, ...user } = userRaw;
         res.json(user);
     } catch (err) {
         throw new NotFoundException('User not found.', ErrorCode.USER_NOT_FOUND);
@@ -128,7 +130,7 @@ export const getUserById = async (req: Request, res: Response) => {
 export const changeUserRole = async (req: Request, res: Response) => {
     ChangeUserRoleSchema.parse(req.body);
     try {
-        const user = await prismaClient.user.update({
+        const userRaw = await prismaClient.user.update({
             where: {
                 id: +req.params.id
             },
@@ -136,6 +138,7 @@ export const changeUserRole = async (req: Request, res: Response) => {
                 role: req.body.role
             }
         });
+        const { password, ...user } = userRaw;
         res.json(user);
     } catch (err) {
         throw new NotFoundException('User not found.', ErrorCode.USER_NOT_FOUND);
