@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import WholesaleProductCard from "../../components/WholesaleProductCard";
+import ProductCard from "../../components/ProductCard";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -53,6 +53,46 @@ export default function WholesalePage() {
                     moq: 40,
                     images: ["https://placehold.co/400x400?text=Storage+Bins"],
                     colors: ["#64748b", "#334155"]
+                },
+                {
+                    _id: "mock5",
+                    name: "Insulated Water Bottle",
+                    category: "Drinkware",
+                    wholesalePrice: 20,
+                    originalPrice: 30,
+                    moq: 100,
+                    images: ["https://placehold.co/400x400?text=Water+Bottle"],
+                    colors: ["#000000", "#ffffff"]
+                },
+                {
+                    _id: "mock6",
+                    name: "Glass Food Storage Jars",
+                    category: "Storage",
+                    wholesalePrice: 35,
+                    originalPrice: 50,
+                    moq: 30,
+                    images: ["https://placehold.co/400x400?text=Storage+Jars"],
+                    colors: ["#cbd5e1"]
+                },
+                {
+                    _id: "mock7",
+                    name: "BPA-Free Salad Bowl",
+                    category: "Kitchenware",
+                    wholesalePrice: 12,
+                    originalPrice: 18,
+                    moq: 150,
+                    images: ["https://placehold.co/400x400?text=Salad+Bowl"],
+                    colors: ["#22c55e", "#fbbf24"]
+                },
+                {
+                    _id: "mock8",
+                    name: "Stackable Plastic Drawers",
+                    category: "Storage",
+                    wholesalePrice: 55,
+                    originalPrice: 75,
+                    moq: 20,
+                    images: ["https://placehold.co/400x400?text=Drawers"],
+                    colors: ["#f8fafc", "#e2e8f0"]
                 }
             ];
             
@@ -96,9 +136,9 @@ export default function WholesalePage() {
                         ))}
                     </div>
                 ) : products.length > 0 ? (
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "32px", marginBottom: "64px" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "24px", marginBottom: "64px" }}>
                         {products.map(product => (
-                            <WholesaleProductCard key={product._id} product={product} />
+                            <ProductCard key={product._id} product={product} mode="wholesale" />
                         ))}
                     </div>
                 ) : (

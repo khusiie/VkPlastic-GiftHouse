@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, Truck, RefreshCcw, HeadphonesIcon, Tag } from "lucide-react";
 import Link from "next/link";
-
+import TrendingProducts from "../components/TrendingProducts";
 
 /* ─── Slider Data ─────────────────────────────────────────────────── */
 const slides = [
@@ -172,6 +172,9 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* ── Trending Products ───────────────────────────────────────── */}
+      <TrendingProducts />
 
       {/* ── Feature Strip ────────────────────────────────────────────── */}
       <section style={{ maxWidth: "1440px", margin: "0 auto", padding: "8px 24px 48px" }}>

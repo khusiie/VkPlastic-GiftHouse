@@ -12,7 +12,10 @@ export default function ProductCard({ product, mode = "retail" }) {
     const price = mode === "wholesale" ? product.wholesalePrice : product.retailPrice;
     // Calculate a mock "original" price if not provided, just for the visual effect
     const originalPrice = Math.round(price * 1.3);
-    const image = product.images?.[0] || "https://placehold.co/400x400?text=No+Image";
+    const image = product.images?.[0];
+
+    // Calculate discount percentage
+    const discountPercentage = Math.round(((originalPrice - price) / originalPrice) * 100) || 25;
 
     // Check if added to cart
     const isAdded = items.some(i => i._id === product._id && i.mode === mode);
@@ -25,6 +28,9 @@ export default function ProductCard({ product, mode = "retail" }) {
         }
     };
 
+    // Mock colors if not provided
+    const colors = product.colors && product.colors.length > 0 ? product.colors : ['#3b82f6', '#ef4444'];
+
     return (
         <div
             style={{
@@ -33,23 +39,39 @@ export default function ProductCard({ product, mode = "retail" }) {
                 position: "relative",
                 cursor: "pointer",
                 backgroundColor: "#fff",
-                fontFamily: "var(--font-geist-sans), sans-serif"
+                fontFamily: "var(--font-geist-sans), sans-serif",
+                paddingBottom: "16px",
+                margin: "12px", // Added margin so the badge bleeding out doesn't get clipped by nearby components
             }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
             {/* Image Container */}
-            <div style={{ position: "relative", backgroundColor: "#f8fafc", overflow: "hidden", aspectRatio: "1/1", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "16px" }}>
-
-                {/* SALE Badge */}
-                <span style={{
-                    position: "absolute", top: "12px", left: "12px", zIndex: 10,
-                    backgroundColor: "#d32f2f", color: "#fff",
-                    fontSize: "12px", fontWeight: 500, padding: "3px 8px",
-                    borderRadius: "2px", letterSpacing: "0.2px"
+            <div style={{ 
+                position: "relative", 
+                backgroundColor: "#e5e7eb", 
+                aspectRatio: "1/1", 
+                display: "flex", 
+                alignItems: "center", 
+                justifyContent: "center", 
+                marginBottom: "16px",
+            }}>
+                {/* SALE Badge - overlapping the top left corner */}
+                <div style={{
+                    position: "absolute", 
+                    top: "-10px", 
+                    left: "-10px", 
+                    zIndex: 20,
+                    backgroundColor: "#e11d48", 
+                    color: "#fff",
+                    fontSize: "13px", 
+                    fontWeight: 700, 
+                    padding: "4px 10px",
+                    borderRadius: "16px", 
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
                 }}>
-                    SALE!
-                </span>
+                    -{discountPercentage}%
+                </div>
 
                 {/* Action Icons (Right Side) */}
                 <div style={{
@@ -69,13 +91,19 @@ export default function ProductCard({ product, mode = "retail" }) {
                     </button>
                 </div>
 
-                {/* Product Image */}
-                <Link href={`/products/${product._id}`} style={{ display: "block", width: "100%", height: "100%" }}>
-                    <img
-                        src={image}
-                        alt={product.name}
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    />
+                {/* Product Image Placeholder Text / Actual Image */}
+                <Link href={`/products/${product._id}`} style={{ display: "flex", width: "100%", height: "100%", position: "relative", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+                    {image ? (
+                        <img
+                            src={image}
+                            alt={product.name}
+                            style={{ width: "100%", height: "100%", objectFit: "cover", mixBlendMode: "multiply", transition: "transform 0.3s ease", transform: isHovered ? "scale(1.05)" : "scale(1)" }}
+                        />
+                    ) : (
+                        <span style={{ fontSize: "24px", fontWeight: 600, color: "#9ca3af", textAlign: "center", padding: "16px", lineHeight: 1.2, display: "block", textDecoration: "none" }}>
+                            {product.name}
+                        </span>
+                    )}
                 </Link>
 
                 {/* Add to Cart Button (Hover overlay) */}
@@ -89,8 +117,8 @@ export default function ProductCard({ product, mode = "retail" }) {
                         <button
                             onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
                             style={{
-                                backgroundColor: "#d32f2f", color: "#fff", border: "none",
-                                padding: "8px 24px", borderRadius: "24px", fontSize: "14px", fontWeight: 500,
+                                backgroundColor: "#e11d48", color: "#fff", border: "none",
+                                padding: "8px 24px", borderRadius: "24px", fontSize: "14px", fontWeight: 600,
                                 boxShadow: "0 4px 12px rgba(0,0,0,0.15)", cursor: "pointer",
                             }}
                         >
@@ -100,13 +128,13 @@ export default function ProductCard({ product, mode = "retail" }) {
                         <button
                             onClick={handleAddToCart}
                             style={{
-                                backgroundColor: "#fff", color: "#374151", border: "none",
-                                padding: "8px 24px", borderRadius: "24px", fontSize: "14px", fontWeight: 500,
+                                backgroundColor: "#fff", color: "#1f2937", border: "none",
+                                padding: "8px 24px", borderRadius: "24px", fontSize: "14px", fontWeight: 600,
                                 boxShadow: "0 4px 12px rgba(0,0,0,0.15)", cursor: "pointer",
                                 transition: "background-color 0.2s, color 0.2s",
                             }}
-                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#d32f2f"; e.currentTarget.style.color = "#fff"; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#fff"; e.currentTarget.style.color = "#374151"; }}
+                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#e11d48"; e.currentTarget.style.color = "#fff"; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#fff"; e.currentTarget.style.color = "#1f2937"; }}
                         >
                             Add to cart
                         </button>
@@ -115,34 +143,47 @@ export default function ProductCard({ product, mode = "retail" }) {
             </div>
 
             {/* Info */}
-            <div style={{ padding: "0 4px", flex: 1, display: "flex", flexDirection: "column" }}>
-
+            <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
                 {/* Name */}
                 <Link href={`/products/${product._id}`} style={{ textDecoration: "none" }}>
-                    <h3 style={{ fontSize: "14px", fontWeight: 400, color: "#374151", lineHeight: 1.5, marginBottom: "8px", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                    <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#1f2937", lineHeight: 1.3, marginBottom: "4px", display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                         {product.name}
                     </h3>
                 </Link>
 
-                {/* Price Box */}
-                <div style={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
-                    <span style={{ fontSize: "16px", fontWeight: 600, color: "#d32f2f" }}>
-                        ₹{price.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </span>
-                    <span style={{ fontSize: "13px", color: "#9ca3af", textDecoration: "line-through" }}>
-                        ₹{originalPrice.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </span>
-                </div>
+                {/* Category */}
+                <p style={{ fontSize: "12px", color: "#6b7280", margin: "0 0 10px 0" }}>
+                    {product.category?.name || product.category || "Storage"}
+                </p>
 
-                {/* Mode indicator (only visible if wholesale to distinguish) */}
-                {mode === "wholesale" && (
-                    <div style={{ marginTop: "6px" }}>
-                        <span style={{ fontSize: "10px", color: "#c31f6d", fontWeight: 600, background: "#fdf2f8", padding: "2px 6px", borderRadius: "12px" }}>
-                            MOQ: {product.moq} pcs
+                {/* Bottom Row: Price and Colors */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                    {/* Price Box */}
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                        <span style={{ fontSize: "16px", fontWeight: 700, color: "#e11d48" }}>
+                            ₹{typeof price === 'number' ? price.toLocaleString("en-IN") : price}
+                        </span>
+                        <span style={{ fontSize: "14px", fontWeight: 500, color: "#9ca3af", textDecoration: "line-through" }}>
+                            ₹{typeof originalPrice === 'number' ? originalPrice.toLocaleString("en-IN") : originalPrice}
                         </span>
                     </div>
-                )}
+
+                    {/* Colors */}
+                    <div style={{ display: "flex", gap: "4px" }}>
+                        {colors.map((color, idx) => (
+                            <div key={idx} style={{ width: "12px", height: "12px", borderRadius: "50%", backgroundColor: color }} />
+                        ))}
+                    </div>
+                </div>
+
+                {/* Mode indicator badge */}
+                <div>
+                    <span style={{ fontSize: "10px", color: "#4b5563", fontWeight: 600, background: "#f3f4f6", padding: "4px 8px", borderRadius: "4px" }}>
+                        Min Order: {mode === "wholesale" ? `${product.moq || 50} units` : `1 unit`}
+                    </span>
+                </div>
             </div>
         </div>
     );
 }
+
