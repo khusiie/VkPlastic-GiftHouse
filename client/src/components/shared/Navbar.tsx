@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { Search, User, Heart, ChevronDown, ShoppingBag } from "lucide-react";
-import { useCart } from "../context/CartContext";
+import { useCart } from "../../context/CartContext";
 import CartDrawer from "./CartDrawer";
 
 export default function Navbar() {

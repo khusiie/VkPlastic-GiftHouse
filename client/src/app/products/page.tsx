@@ -2,9 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Search, SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
-import ProductCard from "../../components/ProductCard";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import ProductCard from "../../components/ui/ProductCard";
+import { productService, Product } from "../../services/productService";
 
 const CATEGORIES = [
     { label: "All", value: "" },
@@ -17,9 +16,9 @@ const CATEGORIES = [
 ];
 
 export default function ProductsPage() {
-    const [products, setProducts] = useState([]);
+    const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
     const [mode, setMode] = useState("retail"); // 'retail' | 'wholesale'
     const [category, setCategory] = useState("");
     const [search, setSearch] = useState("");
@@ -33,21 +32,18 @@ export default function ProductsPage() {
         setLoading(true);
         setError(null);
         try {
-            const params = new URLSearchParams({
+            const data = await productService.getProducts({
                 type: mode,
                 page,
                 limit: LIMIT,
-                ...(category && { category }),
-                ...(search && { search }),
+                category,
+                search
             });
-            const res = await fetch(`${API_URL}/api/products?${params}`);
-            if (!res.ok) throw new Error("Failed to fetch products");
-            const data = await res.json();
             setProducts(data.products);
             setTotalPages(data.pages);
             setTotal(data.total);
-        } catch (err) {
-            setError(err.message);
+        } catch (err: any) {
+            setError(err.message || "Failed to fetch products");
         } finally {
             setLoading(false);
         }

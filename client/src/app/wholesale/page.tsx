@@ -1,106 +1,26 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import ProductCard from "../../components/ProductCard";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { Search, SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
+import ProductCard from "../../components/ui/ProductCard";
+import { productService, Product } from "../../services/productService";
 
 export default function WholesalePage() {
-    const [products, setProducts] = useState([]);
+    const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     const fetchProducts = useCallback(async () => {
         setLoading(true);
+        setError(null);
         try {
-            // Mocking wholesale data instead of calling backend
-            const mockProducts = [
-                {
-                    _id: "mock1",
-                    name: "Premium Storage Container Set",
-                    category: "Storage",
-                    wholesalePrice: 45,
-                    originalPrice: 60,
-                    moq: 50,
-                    images: ["https://placehold.co/400x400?text=Container+Set"],
-                    colors: ["#3b82f6", "#ef4444"]
-                },
-                {
-                    _id: "mock2",
-                    name: "Microwave Safe Lunch Box",
-                    category: "Kitchenware",
-                    wholesalePrice: 15,
-                    originalPrice: 25,
-                    moq: 100,
-                    images: ["https://placehold.co/400x400?text=Lunch+Box"],
-                    colors: ["#10b981", "#f59e0b"]
-                },
-                {
-                    _id: "mock3",
-                    name: "Plastic Drinking Tumblers",
-                    category: "Drinkware",
-                    wholesalePrice: 8,
-                    originalPrice: 12,
-                    moq: 200,
-                    images: ["https://placehold.co/400x400?text=Tumblers"],
-                    colors: ["#8b5cf6", "#ec4899"]
-                },
-                {
-                    _id: "mock4",
-                    name: "Multipurpose Storage Bins",
-                    category: "Storage",
-                    wholesalePrice: 30,
-                    originalPrice: 45,
-                    moq: 40,
-                    images: ["https://placehold.co/400x400?text=Storage+Bins"],
-                    colors: ["#64748b", "#334155"]
-                },
-                {
-                    _id: "mock5",
-                    name: "Insulated Water Bottle",
-                    category: "Drinkware",
-                    wholesalePrice: 20,
-                    originalPrice: 30,
-                    moq: 100,
-                    images: ["https://placehold.co/400x400?text=Water+Bottle"],
-                    colors: ["#000000", "#ffffff"]
-                },
-                {
-                    _id: "mock6",
-                    name: "Glass Food Storage Jars",
-                    category: "Storage",
-                    wholesalePrice: 35,
-                    originalPrice: 50,
-                    moq: 30,
-                    images: ["https://placehold.co/400x400?text=Storage+Jars"],
-                    colors: ["#cbd5e1"]
-                },
-                {
-                    _id: "mock7",
-                    name: "BPA-Free Salad Bowl",
-                    category: "Kitchenware",
-                    wholesalePrice: 12,
-                    originalPrice: 18,
-                    moq: 150,
-                    images: ["https://placehold.co/400x400?text=Salad+Bowl"],
-                    colors: ["#22c55e", "#fbbf24"]
-                },
-                {
-                    _id: "mock8",
-                    name: "Stackable Plastic Drawers",
-                    category: "Storage",
-                    wholesalePrice: 55,
-                    originalPrice: 75,
-                    moq: 20,
-                    images: ["https://placehold.co/400x400?text=Drawers"],
-                    colors: ["#f8fafc", "#e2e8f0"]
-                }
-            ];
-            
-            // Simulating network delay
-            await new Promise(resolve => setTimeout(resolve, 500));
-            setProducts(mockProducts);
-        } catch (err) {
-            console.error(err);
+            const data = await productService.getProducts({
+                type: "wholesale",
+                limit: 12 // Show more for wholesale
+            });
+            setProducts(data.products);
+        } catch (err: any) {
+            setError(err.message || "Failed to fetch wholesale products");
         } finally {
             setLoading(false);
         }
@@ -125,15 +45,22 @@ export default function WholesalePage() {
             </div>
 
             <div style={{ maxWidth: "1440px", margin: "0 auto", padding: "48px 24px" }}>
-                
+
                 {/* Product Grid */}
                 <h2 style={{ fontSize: "28px", fontWeight: 800, color: "#111827", marginBottom: "32px", borderBottom: "2px solid #f1f5f9", paddingBottom: "16px" }}>Featured Wholesale Products</h2>
-                
+
                 {loading ? (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "32px", marginBottom: "64px" }}>
                         {[...Array(4)].map((_, i) => (
                             <div key={i} style={{ backgroundColor: "#f8fafc", aspectRatio: "1/1.1", borderRadius: "0px", animation: "pulse 1.5s infinite" }} />
                         ))}
+                    </div>
+                ) : error ? (
+                    <div style={{ textAlign: "center", padding: "80px 24px" }}>
+                        <p style={{ color: "#ef4444", fontSize: "16px", marginBottom: "8px" }}>⚠️ {error}</p>
+                        <button onClick={fetchProducts} style={{ marginTop: "16px", padding: "10px 24px", backgroundColor: "#c31f6d", color: "#fff", border: "none", borderRadius: "8px", fontWeight: 700, cursor: "pointer" }}>
+                            Retry
+                        </button>
                     </div>
                 ) : products.length > 0 ? (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "24px", marginBottom: "64px" }}>

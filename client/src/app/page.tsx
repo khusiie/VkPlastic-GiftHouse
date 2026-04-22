@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, Truck, RefreshCcw, HeadphonesIcon, Tag } from "lucide-react";
 import Link from "next/link";
-import TrendingProducts from "../components/TrendingProducts";
+import TrendingProducts from "../components/ui/TrendingProducts";
 
 /* ─── Slider Data ─────────────────────────────────────────────────── */
 const slides = [

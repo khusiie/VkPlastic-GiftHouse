@@ -15,6 +15,13 @@ export const createOrder = async (req: Request, res: Response) => {
         throw new BadRequestsException('Cart is empty', ErrorCode.PRODUCT_NOT_FOUND);
     }
 
+    // 1.5 Check stock for all items
+    for (const item of cartItems) {
+        if (item.product.stock < item.quantity) {
+            throw new BadRequestsException(`Product ${item.product.name} is out of stock or does not have enough quantity`, ErrorCode.PRODUCT_NOT_FOUND);
+        }
+    }
+
     // 2. Calculate net amount
     const price = cartItems.reduce((acc, item) => {
         return acc + (item.quantity * Number(item.product.price));
@@ -53,6 +60,14 @@ export const createOrder = async (req: Request, res: Response) => {
                 status: 'PENDING'
             }
         });
+
+        // 4.5 Decrement stock
+        for (const item of cartItems) {
+            await tx.product.update({
+                where: { id: item.productId },
+                data: { stock: { decrement: item.quantity } }
+            });
+        }
 
         // 5. Clear cart
         await tx.cartItem.deleteMany({
@@ -142,7 +157,8 @@ export const getOrderById = async (req: Request, res: Response) => {
 export const cancelOrder = async (req: Request, res: Response) => {
     // Ensure the order belongs to the user and is still pending
     const order = await prismaClient.order.findFirst({
-        where: { id: +req.params.id, userId: req.user.id }
+        where: { id: +req.params.id, userId: req.user.id },
+        include: { products: true }
     });
 
     if (!order) {
@@ -165,6 +181,14 @@ export const cancelOrder = async (req: Request, res: Response) => {
                 status: 'CANCELLED'
             }
         });
+
+        // Restore stock
+        for (const item of order.products) {
+            await tx.product.update({
+                where: { id: item.productId },
+                data: { stock: { increment: item.quantity } }
+            });
+        }
 
         return updated;
     });

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Heart, RefreshCcw, Search } from "lucide-react";
 import Link from "next/link";
-import { useCart } from "../context/CartContext";
+import { useCart } from "../../context/CartContext";
 
 export default function ProductCard({ product, mode = "retail" }) {
     const [isHovered, setIsHovered] = useState(false);
@@ -47,27 +47,27 @@ export default function ProductCard({ product, mode = "retail" }) {
             onMouseLeave={() => setIsHovered(false)}
         >
             {/* Image Container */}
-            <div style={{ 
-                position: "relative", 
-                backgroundColor: "#e5e7eb", 
-                aspectRatio: "1/1", 
-                display: "flex", 
-                alignItems: "center", 
-                justifyContent: "center", 
+            <div style={{
+                position: "relative",
+                backgroundColor: "#e5e7eb",
+                aspectRatio: "1/1",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
                 marginBottom: "16px",
             }}>
                 {/* SALE Badge - overlapping the top left corner */}
                 <div style={{
-                    position: "absolute", 
-                    top: "-10px", 
-                    left: "-10px", 
+                    position: "absolute",
+                    top: "-10px",
+                    left: "-10px",
                     zIndex: 20,
-                    backgroundColor: "#e11d48", 
+                    backgroundColor: "#e11d48",
                     color: "#fff",
-                    fontSize: "13px", 
-                    fontWeight: 700, 
+                    fontSize: "13px",
+                    fontWeight: 700,
                     padding: "4px 10px",
-                    borderRadius: "16px", 
+                    borderRadius: "16px",
                     boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
                 }}>
                     -{discountPercentage}%

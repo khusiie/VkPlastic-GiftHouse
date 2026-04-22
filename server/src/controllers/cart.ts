@@ -3,6 +3,7 @@ import { prismaClient } from '../prisma';
 import { CreateCartSchema, ChangeQuantitySchema } from '../schema/cart';
 import { NotFoundException } from '../exceptions/not_found';
 import { ErrorCode } from '../exceptions/root';
+import { BadRequestsException } from '../exceptions/bad_requests';
 
 export const addItemToCart = async (req: Request, res: Response) => {
     const validatedData = CreateCartSchema.parse(req.body);
@@ -27,11 +28,17 @@ export const addItemToCart = async (req: Request, res: Response) => {
         }
     });
 
+    // Check if enough stock
+    const newQuantity = existingCartItem ? existingCartItem.quantity + validatedData.quantity : validatedData.quantity;
+    if (product.stock < newQuantity) {
+        throw new BadRequestsException('Not enough stock available!', ErrorCode.PRODUCT_NOT_FOUND);
+    }
+
     if (existingCartItem) {
         // Update quantity if item already in cart
         const updatedCartItem = await prismaClient.cartItem.update({
             where: { id: existingCartItem.id },
-            data: { quantity: existingCartItem.quantity + validatedData.quantity }
+            data: { quantity: newQuantity }
         });
         res.json(updatedCartItem);
     } else {
@@ -65,6 +72,18 @@ export const changeQuantity = async (req: Request, res: Response) => {
     const validatedData = ChangeQuantitySchema.parse(req.body);
 
     try {
+        const cartItem = await prismaClient.cartItem.findFirstOrThrow({
+            where: {
+                id: +req.params.id,
+                userId: req.user.id
+            },
+            include: { product: true }
+        });
+
+        if (cartItem.product.stock < validatedData.quantity) {
+            throw new BadRequestsException('Not enough stock available!', ErrorCode.PRODUCT_NOT_FOUND);
+        }
+
         const updatedCart = await prismaClient.cartItem.update({
             where: {
                 id: +req.params.id,
@@ -74,6 +93,7 @@ export const changeQuantity = async (req: Request, res: Response) => {
         });
         res.json(updatedCart);
     } catch (err) {
+        if (err instanceof BadRequestsException) throw err;
         throw new NotFoundException('Cart item not found!', ErrorCode.PRODUCT_NOT_FOUND);
     }
 };
