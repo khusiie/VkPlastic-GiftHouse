@@ -29,26 +29,13 @@ function getPageTitle(pathname: string) {
     return 'Admin Control';
 }
 
-interface TopBarProps {
-    onMenuClick: () => void;
-}
-
-export default function TopBar({ onMenuClick }: TopBarProps) {
+export default function TopBar() {
     const pathname = usePathname();
     const title = getPageTitle(pathname);
 
     return (
         <header className="h-28 bg-[#f8f9ff]/80 backdrop-blur-md flex items-center justify-between px-6 lg:px-12 sticky top-0 z-40 transition-all">
             <div className="flex items-center gap-6 flex-1">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={onMenuClick}
-                    className="lg:hidden text-slate-500 hover:bg-white shadow-sm rounded-xl h-12 w-12"
-                >
-                    <Menu size={24} />
-                </Button>
-
                 <div className="hidden md:flex items-center relative max-w-xl w-full">
                     <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                     <Input
