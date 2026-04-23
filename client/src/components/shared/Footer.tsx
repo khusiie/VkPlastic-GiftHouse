@@ -1,10 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Facebook, Twitter, Instagram, Youtube, Linkedin, Mail, Phone, MapPin, Send, ShieldCheck, Award, RefreshCw, Lock, Star } from "lucide-react";
 
 export default function Footer() {
+    const pathname = usePathname();
     const currentYear = new Date().getFullYear();
+
+    // Hide footer on admin pages
+    if (pathname?.startsWith('/admin')) return null;
 
     return (
         <footer className="footer-root">
