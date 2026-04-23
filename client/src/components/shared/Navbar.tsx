@@ -13,6 +13,9 @@ export default function Navbar() {
 
   const pathname = usePathname();
 
+  // Hide navbar on admin pages
+  if (pathname?.startsWith('/admin')) return null;
+
   return (
     <>
       <header style={{ backgroundColor: "#fff", borderBottom: "1px solid #e5e7eb", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", position: "sticky", top: 0, zIndex: 50 }}>

@@ -26,7 +26,7 @@ export const metadata = {
   description: "India's Premier Wholesale & Retail Destination for Plastics & Gifts",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased selection:bg-indigo-300 selection:text-indigo-900 bg-slate-50 relative min-h-screen font-sans`}>
